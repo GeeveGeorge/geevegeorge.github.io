@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geeve George | Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0F0F0F;
+            --card-bg: #141414;
+            --card-border: #2A2A2A;
+            --text-white: #FFFFFF;
+            --text-grey: #888888;
+            --text-dim: #444444;
+            --accent-green: #00FF94;
+            --accent-pink: #FF00CC;
+            --accent-orange: #FF4500;
+            --accent-blue: #00D1FF;
+            --font-sans: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-white);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            overflow-x: hidden;
+        }
+
+        /* Typing Cursor Animation */
+        @keyframes blink-cursor {
+
+            0%,
+            100% {
+                border-right-color: transparent;
+            }
+
+            50% {
+                border-right-color: var(--accent-green);
+            }
+        }
+
+        .typing-effect {
+            display: inline-block;
+            border-right: 0.1em solid var(--accent-green);
+            white-space: nowrap;
+            overflow: hidden;
+            animation: blink-cursor 0.75s step-end infinite;
+            padding-right: 5px;
+        }
+
+        /* PDF Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            width: 90%;
+            height: 90%;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: 1px solid var(--card-border);
+            color: var(--text-white);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: var(--font-mono);
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: var(--accent-orange);
+            border-color: var(--accent-orange);
+            color: black;
+        }
+
+        .pdf-frame {
+            flex: 1;
+            width: 100%;
+            border: none;
+            border-radius: 0 0 12px 12px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--card-border);
+            position: sticky;
+            top: 1rem;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-brand {
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-status {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-green);
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .nav-toggle {
+            background: #000;
+            border-radius: 8px;
+            padding: 0.25rem;
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .toggle-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-grey);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn:hover {
+            color: white;
+        }
+
+        .toggle-btn.active {
+            background: #222;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Bento Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--card-border);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: border-color 0.3s;
+        }
+
+        .card:hover {
+            border-color: #444;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-grey);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            z-index: 2;
+        }
+
+        .tag {
+            background: #222;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--accent-green);
+        }
+
+        /* Intro Card (Span 2) */
+        .card-intro {
+            grid-column: span 2;
+            background: radial-gradient(circle at top right, #1F1F1F, var(--card-bg));
+        }
+
+        .intro-text {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 300;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .matrix-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.05;
+            pointer-events: none;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIi8+Cjwvc3ZnPg==');
+        }
+
+        /* Skill Matrix (Span 1) */
+        .card-skills {
+            grid-column: span 1;
+        }
+
+        .skill-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            align-items: center;
+        }
+
+        .skill-bar-bg {
+            width: 60px;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .skill-bar-fill {
+            height: 100%;
+            background: var(--accent-green);
+        }
+
+        /* Time Tracker (Span 1) */
+        .card-time {
+            grid-column: span 1;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .gauge-container {
+            position: relative;
+            width: 120px;
+            height: 60px;
+            margin: 1rem 0;
+        }
+
+        .gauge-arc {
+            width: 100%;
+            height: 100%;
+            background: conic-gradient(from 180deg at 50% 100%, var(--accent-pink) 0deg, var(--accent-green) 180deg);
+            border-radius: 120px 120px 0 0;
+            opacity: 0.8;
+        }
+
+        .gauge-mask {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90px;
+            height: 45px;
+            background: var(--card-bg);
+            border-radius: 90px 90px 0 0;
+        }
+
+        /* Project Cards (Video Feeds) */
+        .card-project {
+            grid-column: span 2;
+            height: 300px;
+            padding: 0;
+            position: relative;
+            border: 1px solid var(--card-border);
+        }
+
+        .card-project video,
+        .card-project img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.5;
+            transition: all 0.4s ease;
+            filter: grayscale(20%);
+        }
+
+        .card-project:hover video,
+        .card-project:hover img {
+            opacity: 0.2;
+            filter: grayscale(0%) blur(4px);
+            transform: scale(1.02);
+        }
+
+        .project-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+            pointer-events: none;
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            height: 100%;
+        }
+
+        .card-project:hover .project-overlay {
+            background: rgba(0, 0, 0, 0.7);
+            padding-bottom: 2rem;
+        }
+
+        .project-content {
+            transform: translateY(20px);
+            transition: transform 0.4s ease;
+        }
+
+        .card-project:hover .project-content {
+            transform: translateY(0);
+        }
+
+        .project-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .project-role-tag {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--accent-green);
+            background: rgba(0, 255, 148, 0.1);
+            padding: 2px 6px;
+            border: 1px solid rgba(0, 255, 148, 0.2);
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .project-desc {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #e0e0e0;
+            margin-bottom: 1rem;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .card-project:hover .project-desc {
+            opacity: 1;
+            max-height: 100px;
+            /* Approximate height for text */
+            margin-bottom: 1.5rem;
+        }
+
+        .tech-stack {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-grey);
+            display: flex;
+            gap: 0.5rem;
+            opacity: 0.8;
+        }
+
+        .card-project:hover .tech-stack {
+            opacity: 1;
+            color: var(--accent-blue);
+        }
+
+        /* Timeline / Experience */
+        .card-timeline {
+            grid-column: span 2;
+            grid-row: span 2;
+            overflow-y: auto;
+        }
+
+        .timeline-entry {
+            border-left: 1px solid #333;
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .timeline-entry::before {
+            content: '';
+            position: absolute;
+            left: -3px;
+            top: 6px;
+            width: 5px;
+            height: 5px;
+            background: var(--accent-orange);
+            border-radius: 50%;
+        }
+
+        .timeline-date {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-grey);
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-role {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .timeline-company {
+            font-family: var(--font-mono);
+            color: var(--accent-green);
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-desc {
+            font-size: 0.85rem;
+            color: var(--text-grey);
+            line-height: 1.5;
+        }
+
+        /* Terminal / Awards */
+        .card-terminal {
+            grid-column: span 2;
+            background: #0a0a0a;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            overflow-y: auto;
+            height: 300px;
+        }
+
+        .terminal-line {
+            margin-bottom: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .cmd {
+            color: var(--accent-green);
+        }
+
+        .path {
+            color: var(--accent-blue);
+        }
+
+        .output {
+            color: var(--text-grey);
+        }
+
+        .highlight {
+            color: white;
+            text-decoration: none;
+            border-bottom: 1px dotted #555;
+        }
+
+        .highlight:hover {
+            color: var(--accent-green);
+            border-bottom-style: solid;
+        }
+
+        /* Map */
+        .card-map {
+            grid-column: span 2;
+            height: 250px;
+            background-image: radial-gradient(#333 1px, transparent 1px);
+            background-size: 20px 20px;
+            position: relative;
+        }
+
+        .map-point {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .map-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px white;
+        }
+
+        .map-label {
+            background: #111;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            border: 1px solid #333;
+        }
+
+        /* Footer */
+        .footer-bar {
+            grid-column: span 4;
+            border-top: 1px solid var(--card-border);
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                grid-column: span 1 !important;
+            }
+
+            .card-timeline,
+            .card-terminal {
+                height: auto;
+                max-height: 400px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="nav-brand">
+            <div class="nav-status"></div>
+            GEEVE GEORGE // DASHBOARD
+        </div>
+        <div class="nav-toggle">
+            <button class="toggle-btn active" onclick="location.reload()">MONITOR</button>
+            <button class="toggle-btn" onclick="openCV()">SOURCE CODE (CV)</button>
+            <button class="toggle-btn" onclick="window.location.href='mailto:geeve@connect.ust.hk'">EMAIL ME</button>
+        </div>
+    </nav>
+
+    <!-- PDF Modal -->
+    <div class="modal-overlay" id="cvModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent-green);">// VIEWING:
+                    GEEVE_CV_NEW.PDF</span>
+                <button class="modal-close" onclick="closeCV()">CLOSE_VIEWER [X]</button>
+            </div>
+            <iframe src="geeve_cv_new.pdf" class="pdf-frame"></iframe>
+        </div>
+    </div>
+
+    <main class="dashboard-grid">
+        <!-- Intro -->
+        <div class="card card-intro">
+            <div class="matrix-bg"></div>
+            <div class="card-header">
+                <span>// ID_CARD</span>
+                <span class="tag">ONLINE</span>
+            </div>
+            <h1 class="intro-text"><span class="typing-effect" id="typewriter"></span></h1>
+            <p style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--text-grey); max-width: 80%;">
+                &gt; Subject: Geeve George<br>
+                &gt; Role: Creative Technologist & Robotics Engineer<br>
+                &gt; Mission: Bridging Atoms & Bits through Embodied AI.
+            </p>
+        </div>
+
+        <!-- Time Stats -->
+        <div class="card card-time">
+            <div class="card-header">
+                <span>// IMPACT_METRIC</span>
+            </div>
+            <h2 style="font-size: 2.5rem; font-weight: 700; margin: 0;">250k+</h2>
+            <p style="font-size: 0.7rem; color: var(--text-grey); text-transform: uppercase;">Robots Deployed (Miko)</p>
+            <div class="gauge-container">
+                <div class="gauge-arc"></div>
+                <div class="gauge-mask"></div>
+            </div>
+        </div>
+
+        <!-- Skills -->
+        <div class="card card-skills">
+            <div class="card-header">
+                <span>// SYS_CAPABILITIES</span>
+            </div>
+            <div class="skill-row">
+                <span>Robotics/ROS2</span>
+                <div class="skill-bar-bg">
+                    <div class="skill-bar-fill" style="width: 95%;"></div>
+                </div>
+            </div>
+            <div class="skill-row">
+                <span>Isaac Sim</span>
+                <div class="skill-bar-bg">
+                    <div class="skill-bar-fill" style="width: 90%;"></div>
+                </div>
+            </div>
+            <div class="skill-row">
+                <span>VLA Models</span>
+                <div class="skill-bar-bg">
+                    <div class="skill-bar-fill" style="width: 92%;"></div>
+                </div>
+            </div>
+            <div class="skill-row">
+                <span>Python/C++</span>
+                <div class="skill-bar-bg">
+                    <div class="skill-bar-fill" style="width: 98%;"></div>
+                </div>
+            </div>
+            <div class="skill-row">
+                <span>PCB Design</span>
+                <div class="skill-bar-bg">
+                    <div class="skill-bar-fill" style="width: 85%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project 1: Lamp-E -->
+        <div class="card card-project">
+            <div class="card-header" style="position: absolute; top: 1.5rem; left: 1.5rem; width: calc(100% - 3rem);">
+                <span>// CAM_01</span>
+                <span class="tag">LIVE FEED</span>
+            </div>
+            <video autoplay muted loop playsinline>
+                <source src="Lamp e v1_compressed.mp4" type="video/mp4">
+            </video>
+            <div class="project-overlay">
+                <div class="project-content">
+                    <h3 class="project-title">LAMP-E</h3>
+                    <span class="project-role-tag">ROLE: HEAD OF ENGINEERING (TEAM OF 10)</span>
+                    <p class="project-desc">
+                        Embodied AI lamp capable of emotional emulation and real-world interaction. Developed custom VLA
+                        models for speech/visual captioning. Trained in Isaac Sim on NVIDIA Jetson.
+                    </p>
+                    <div class="tech-stack">
+                        <span>[ROS2]</span>
+                        <span>[ISAAC SIM]</span>
+                        <span>[VLA MODELS]</span>
+                        <span>[JETSON]</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project 2: Santra -->
+        <div class="card card-project">
+            <div class="card-header" style="position: absolute; top: 1.5rem; left: 1.5rem; width: calc(100% - 3rem);">
+                <span>// CAM_02</span>
+                <span class="tag">RECORDING</span>
+            </div>
+            <video autoplay muted loop playsinline>
+                <source src="santra.mp4" type="video/mp4">
+            </video>
+            <div class="project-overlay">
+                <div class="project-content">
+                    <h3 class="project-title">SANTRA</h3>
+                    <span class="project-role-tag">ROLE: LEAD ARCHITECT (FIRMWARE & PCB)</span>
+                    <p class="project-desc">
+                        World's first agentic wearable. Bridges voice commands with autonomous digital actions (200+
+                        apps). Achieved sub-200ms latency via custom firmware and PCB design.
+                    </p>
+                    <div class="tech-stack">
+                        <span>[C++]</span>
+                        <span>[PCB DESIGN]</span>
+                        <span>[LLM AGENTS]</span>
+                        <span>[WEARABLE]</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="card card-timeline">
+            <div class="card-header">
+                <span>// CAREER_LOGS</span>
+            </div>
+
+            <div class="timeline-entry">
+                <div class="timeline-date">2025 - PRESENT</div>
+                <div class="timeline-role">PhD Student (ML & HCI)</div>
+                <div class="timeline-company">HKUST</div>
+                <p class="timeline-desc">Focusing on Embodied AI and Human-Robot Interaction.</p>
+            </div>
+
+            <div class="timeline-entry">
+                <div class="timeline-date">2025</div>
+                <div class="timeline-role">Founder</div>
+                <div class="timeline-company">Bluebrain HK</div>
+                <p class="timeline-desc">Leading a team of researchers from Alibaba Qwen and Minimax. Building
+                    foundation models focused on pre-training research.</p>
+            </div>
+
+            <div class="timeline-entry">
+                <div class="timeline-date">SEPT 2025 - PRESENT</div>
+                <div class="timeline-role">Head of Robotics</div>
+                <div class="timeline-company"><a href="https://x.com/heliumrobotics/" target="_blank"
+                        style="color: inherit; text-decoration: underline;">Helium Robotics</a></div>
+                <p class="timeline-desc">Oversaw R&D of robots. Led a team of 10 engineers to build Lamp-E and Santra.
+                </p>
+            </div>
+
+            <div class="timeline-entry">
+                <div class="timeline-date">PREVIOUS</div>
+                <div class="timeline-role">CTO</div>
+                <div class="timeline-company"><a href="http://zkglabs.com" target="_blank"
+                        style="color: inherit; text-decoration: underline;">ZKG Labs</a></div>
+                <p class="timeline-desc">Developing digital twins using computer agents that mimic real-life employees.
+                </p>
+            </div>
+
+            <div class="timeline-entry">
+                <div class="timeline-date">PREVIOUS</div>
+                <div class="timeline-role">AI Researcher</div>
+                <div class="timeline-company"><a href="https://miko.ai" target="_blank"
+                        style="color: inherit; text-decoration: underline;">Miko Robotics</a></div>
+                <p class="timeline-desc">India's #1 consumer robotics company. Implemented generative stories and GenAI
+                    features for 250k+ robots.</p>
+            </div>
+        </div>
+
+        <!-- Terminal (Awards) -->
+        <div class="card card-terminal">
+            <div class="card-header">
+                <span>// ACCOLADES_TERM</span>
+                <span class="tag">ROOT ACCESS</span>
+            </div>
+
+            <div class="terminal-line">
+                <span class="cmd">></span>
+                <span class="path">./list_awards.sh</span>
+            </div>
+
+            <div class="terminal-line">
+                <span class="output">[1] <a
+                        href="https://www.intel.com/content/www/us/en/corporate-responsibility/impact/smartphone-aided-vein-imaging.html"
+                        target="_blank" class="highlight">Intel ISEF 2nd Place Grand Award</a> - Biomedical
+                    Engineering</span>
+            </div>
+            <div class="terminal-line">
+                <span class="output">[2] <a
+                        href="https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=34017%20Geeve&view=VD"
+                        target="_blank" class="highlight">MIT Lincoln Labs Ceres Connection</a> - Minor Planet (34017
+                    Geeve)</a></span>
+            </div>
+            <div class="terminal-line">
+                <span class="output">[3] <a
+                        href="https://www.deccanherald.com/content/512517/state-team-wins-national-level.html"
+                        target="_blank" class="highlight">TCS Rural IT Quiz National Champion</a> - 1st Place (1.4M
+                    participants)</span>
+            </div>
+            <div class="terminal-line">
+                <span class="output">[4] <a
+                        href="https://www.dailymail.co.uk/sciencetech/article-3153804/Could-ASTEROID-protect-Earth-against-climate-change-Teenager-proposes-create-dust-screen-using-orbiting-rocks.html"
+                        target="_blank" class="highlight">Google Science Fair Regional Finalist</a> - Top 90
+                    Global</span>
+            </div>
+            <div class="terminal-line">
+                <span class="output">[5] <a href="https://youtu.be/MMXUI9CTV7U?si=L1dhVcDJOQ63W5DF" target="_blank"
+                        class="highlight">TEDx Speaker</a> - "Using Technology To Solve Real World Problems"</span>
+            </div>
+            <div class="terminal-line">
+                <span class="output">[6] HKSTP Techathon Winner (Top 0.05%)</span>
+            </div>
+            <div class="terminal-line">
+                <span class="output">[7] RedBird PhD Award</span>
+            </div>
+
+            <div class="terminal-line">
+                <span class="cmd">></span>
+                <span class="path">_</span>
+            </div>
+        </div>
+
+        <!-- Project 3: Bluebrain -->
+        <div class="card card-project" style="grid-column: span 2;">
+            <div class="card-header" style="position: absolute; top: 1.5rem; left: 1.5rem; width: calc(100% - 3rem);">
+                <span>// CAM_03</span>
+                <span class="tag">STATIC</span>
+            </div>
+            <img src="bluebrain.jpg" alt="Bluebrain Team">
+            <div class="project-overlay">
+                <div class="project-content">
+                    <h3 class="project-title">BLUEBRAIN HK</h3>
+                    <span class="project-role-tag">ROLE: FOUNDER & LEAD RESEARCHER</span>
+                    <p class="project-desc">
+                        Orchestrating top ML talent from Alibaba Qwen and Minimax. Building a foundation model company
+                        focused on advanced pre-training research and post-training strategies.
+                    </p>
+                    <div class="tech-stack">
+                        <span>[FOUNDATION MODELS]</span>
+                        <span>[PRE-TRAINING]</span>
+                        <span>[STRATEGY]</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map -->
+        <div class="card card-map">
+            <div class="card-header">
+                <span>// GEOLOCATION</span>
+            </div>
+
+            <div class="map-point" style="top: 40%; right: 25%;">
+                <div class="map-dot"></div>
+                <div class="map-label">HKUST (Hong Kong)</div>
+            </div>
+
+            <div class="map-point" style="top: 50%; right: 35%;">
+                <div class="map-dot"
+                    style="background: var(--accent-orange); box-shadow: 0 0 10px var(--accent-orange);"></div>
+                <div class="map-label">India (Origins)</div>
+            </div>
+
+            <div
+                style="position: absolute; bottom: 1.5rem; left: 1.5rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-grey);">
+                COORDS: 22.3193° N, 114.1694° E<br>
+                SECTOR: ASIA-PACIFIC
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer-bar">
+            <div>SYSTEM STATUS: OPTIMAL</div>
+            <div>© 2025 GEEVE GEORGE</div>
+            <div>INITIATED: 2015 // UPDATED: 2025</div>
+        </footer>
+
+    </main>
+
+    <script>
+        function openCV() {
+            document.getElementById('cvModal').classList.add('active');
+        }
+
+        function closeCV() {
+            document.getElementById('cvModal').classList.remove('active');
+        }
+
+        // Close on click outside
+        document.getElementById('cvModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCV();
+            }
+        });
+
+        // Typewriter Effect
+        const textToType = "Hello World_";
+        const typeWriterElement = document.getElementById('typewriter');
+        let typeIndex = 0;
+
+        function typeWriter() {
+            if (typeIndex < textToType.length) {
+                typeWriterElement.innerHTML += textToType.charAt(typeIndex);
+                typeIndex++;
+                setTimeout(typeWriter, 100); // Typing speed
+            }
+        }
+
+        // Start typing when page loads
+        window.onload = typeWriter;
+    </script>
+</body>
+
+</html>
