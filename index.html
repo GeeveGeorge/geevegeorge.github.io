@@ -602,6 +602,12 @@
             color: var(--text-dim);
         }
 
+        /* Hero Carousel Wrapper (Desktop Default) */
+        .hero-carousel {
+            display: contents;
+            /* Children act as direct grid items */
+        }
+
         /* Responsive Design */
         @media (max-width: 1200px) {
             .dashboard-grid {
@@ -883,10 +889,54 @@
                 margin: 1rem 0;
             }
 
+            /* HERO CAROUSEL (MOBILE ONLY) */
+            .hero-carousel {
+                display: flex;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                gap: 1rem;
+                padding-bottom: 1rem;
+                /* Space for scrollbar/touch */
+                margin: 0 -1rem 2rem -1rem;
+                /* Full width bleed */
+                padding: 0 1rem 1rem 1rem;
+                /* Inner padding for first item */
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .hero-carousel::-webkit-scrollbar {
+                display: none;
+                /* Hide scrollbar for cleaner look */
+            }
+
+            .hero-carousel .card {
+                min-width: 85vw;
+                /* Show most of card */
+                height: 65vh;
+                /* Tall aspect ratio like reference */
+                scroll-snap-align: center;
+                flex-shrink: 0;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                /* Center content vertically */
+            }
+
+            /* Specific adjustments for carousel cards */
+            .hero-carousel .card-intro {
+                min-height: auto;
+                /* Reset min-height */
+            }
+
+            .hero-carousel .card-time h2 {
+                font-size: 5rem;
+                /* Even larger for impact */
+            }
+
             /* Hide other cards for cleaner look if needed, or style them similarly */
             .card-timeline,
             .card-terminal,
-            .card-skills,
             .card-map {
                 background: #111;
                 border: none;
@@ -922,67 +972,71 @@
     </div>
 
     <main class="dashboard-grid">
-        <!-- Intro -->
-        <div class="card card-intro">
-            <div class="matrix-bg"></div>
-            <div class="card-header">
-                <span>// ID_CARD</span>
-                <span class="tag">ONLINE</span>
+        <!-- Hero Carousel Wrapper -->
+        <div class="hero-carousel">
+            <!-- Intro -->
+            <div class="card card-intro">
+                <div class="matrix-bg"></div>
+                <div class="card-header">
+                    <span>// ID_CARD</span>
+                    <span class="tag">ONLINE</span>
+                </div>
+                <h1 class="intro-text"><span class="typing-effect" id="typewriter"></span></h1>
+                <p style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--text-grey); max-width: 80%;">
+                    &gt; Subject: Geeve George<br>
+                    &gt; Role: Creative Technologist & Robotics Engineer<br>
+                    &gt; Mission: Bridging Atoms & Bits through Embodied AI.
+                </p>
             </div>
-            <h1 class="intro-text"><span class="typing-effect" id="typewriter"></span></h1>
-            <p style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--text-grey); max-width: 80%;">
-                &gt; Subject: Geeve George<br>
-                &gt; Role: Creative Technologist & Robotics Engineer<br>
-                &gt; Mission: Bridging Atoms & Bits through Embodied AI.
-            </p>
-        </div>
 
-        <!-- Time Stats -->
-        <div class="card card-time">
-            <div class="card-header">
-                <span>// IMPACT_METRIC</span>
+            <!-- Time Stats -->
+            <div class="card card-time">
+                <div class="card-header">
+                    <span>// IMPACT_METRIC</span>
+                </div>
+                <h2 style="font-size: 2.5rem; font-weight: 700; margin: 0;">250k+</h2>
+                <p style="font-size: 0.7rem; color: var(--text-grey); text-transform: uppercase;">Robots Deployed (Miko)
+                </p>
+                <div class="gauge-container">
+                    <div class="gauge-arc"></div>
+                    <div class="gauge-mask"></div>
+                </div>
             </div>
-            <h2 style="font-size: 2.5rem; font-weight: 700; margin: 0;">250k+</h2>
-            <p style="font-size: 0.7rem; color: var(--text-grey); text-transform: uppercase;">Robots Deployed (Miko)</p>
-            <div class="gauge-container">
-                <div class="gauge-arc"></div>
-                <div class="gauge-mask"></div>
-            </div>
-        </div>
 
-        <!-- Skills -->
-        <div class="card card-skills">
-            <div class="card-header">
-                <span>// SYS_CAPABILITIES</span>
-            </div>
-            <div class="skill-row">
-                <span>Robotics/ROS2</span>
-                <div class="skill-bar-bg">
-                    <div class="skill-bar-fill" style="width: 95%;"></div>
+            <!-- Skills -->
+            <div class="card card-skills">
+                <div class="card-header">
+                    <span>// SYS_CAPABILITIES</span>
                 </div>
-            </div>
-            <div class="skill-row">
-                <span>Isaac Sim</span>
-                <div class="skill-bar-bg">
-                    <div class="skill-bar-fill" style="width: 90%;"></div>
+                <div class="skill-row">
+                    <span>Robotics/ROS2</span>
+                    <div class="skill-bar-bg">
+                        <div class="skill-bar-fill" style="width: 95%;"></div>
+                    </div>
                 </div>
-            </div>
-            <div class="skill-row">
-                <span>VLA Models</span>
-                <div class="skill-bar-bg">
-                    <div class="skill-bar-fill" style="width: 92%;"></div>
+                <div class="skill-row">
+                    <span>Isaac Sim</span>
+                    <div class="skill-bar-bg">
+                        <div class="skill-bar-fill" style="width: 90%;"></div>
+                    </div>
                 </div>
-            </div>
-            <div class="skill-row">
-                <span>Python/C++</span>
-                <div class="skill-bar-bg">
-                    <div class="skill-bar-fill" style="width: 98%;"></div>
+                <div class="skill-row">
+                    <span>VLA Models</span>
+                    <div class="skill-bar-bg">
+                        <div class="skill-bar-fill" style="width: 92%;"></div>
+                    </div>
                 </div>
-            </div>
-            <div class="skill-row">
-                <span>PCB Design</span>
-                <div class="skill-bar-bg">
-                    <div class="skill-bar-fill" style="width: 85%;"></div>
+                <div class="skill-row">
+                    <span>Python/C++</span>
+                    <div class="skill-bar-bg">
+                        <div class="skill-bar-fill" style="width: 98%;"></div>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <span>PCB Design</span>
+                    <div class="skill-bar-bg">
+                        <div class="skill-bar-fill" style="width: 85%;"></div>
+                    </div>
                 </div>
             </div>
         </div>
