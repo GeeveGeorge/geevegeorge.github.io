@@ -602,7 +602,85 @@
             color: var(--text-dim);
         }
 
-        @media (max-width: 1024px) {
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .card-intro {
+                grid-column: span 2;
+            }
+
+            .card-time {
+                grid-column: span 1;
+            }
+
+            .card-skills {
+                grid-column: span 3;
+            }
+
+            /* Full width on tablet */
+            .card-project {
+                grid-column: span 3;
+            }
+
+            /* Full width on tablet */
+            .card-timeline {
+                grid-column: span 2;
+            }
+
+            .card-terminal {
+                grid-column: span 1;
+            }
+
+            .card-map {
+                grid-column: span 3;
+            }
+
+            .footer-bar {
+                grid-column: span 3;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .card {
+                grid-column: span 2 !important;
+            }
+
+            /* Force full width for most cards */
+            .card-time {
+                grid-column: span 1 !important;
+            }
+
+            /* Keep time/stats side-by-side if possible */
+            .card-skills {
+                grid-column: span 2 !important;
+            }
+
+            /* Adjust Navigation */
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .nav-toggle {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .intro-text {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
@@ -611,10 +689,78 @@
                 grid-column: span 1 !important;
             }
 
+            /* Everything full width */
+
+            body {
+                padding: 0.5rem;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+
+            .intro-text {
+                font-size: 2rem;
+            }
+
+            .nav-brand {
+                font-size: 0.8rem;
+            }
+
+            .toggle-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.7rem;
+            }
+
+            .project-title {
+                font-size: 1.4rem;
+            }
+
+            /* Adjust timeline/terminal height for mobile */
             .card-timeline,
             .card-terminal {
-                height: auto;
-                max-height: 400px;
+                max-height: 350px;
+            }
+        }
+
+        /* Touch Device Optimizations (Hover Fixes) */
+        @media (hover: none) {
+
+            .card-project video,
+            .card-project img {
+                opacity: 0.3;
+                /* Make background darker by default */
+                filter: grayscale(0%);
+                /* Show color */
+            }
+
+            .project-overlay {
+                background: linear-gradient(to top, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.4));
+                padding-bottom: 1.5rem;
+            }
+
+            .project-content {
+                transform: translateY(0);
+                /* Always show content */
+            }
+
+            .project-desc {
+                opacity: 1;
+                max-height: 200px;
+                /* Allow text to be visible */
+                margin-bottom: 1rem;
+                font-size: 0.85rem;
+            }
+
+            .tech-stack {
+                opacity: 1;
+                color: var(--accent-blue);
+                flex-wrap: wrap;
+            }
+
+            .card:hover {
+                border-color: var(--card-border);
+                /* Remove border hover effect on touch */
             }
         }
     </style>
