@@ -889,57 +889,82 @@
                 margin: 1rem 0;
             }
 
-            /* HERO CAROUSEL (MOBILE ONLY) */
+            /* HERO CAROUSEL (MOBILE ONLY) - NOW VERTICAL STACK */
             .hero-carousel {
                 display: flex;
-                overflow-x: auto;
-                scroll-snap-type: x mandatory;
-                gap: 1rem;
-                padding-bottom: 1rem;
-                /* Space for scrollbar/touch */
-                margin: 0 -1rem 2rem -1rem;
-                /* Full width bleed */
-                padding: 0 1rem 1rem 1rem;
-                /* Inner padding for first item */
-                -webkit-overflow-scrolling: touch;
+                flex-direction: column;
+                /* Stack vertically */
+                gap: 1.5rem;
+                /* Consistent spacing */
+                margin-bottom: 2rem;
             }
 
+            /* Remove scrollbar hiding since we are not scrolling horizontally anymore */
             .hero-carousel::-webkit-scrollbar {
-                display: none;
-                /* Hide scrollbar for cleaner look */
+                display: initial;
             }
 
             .hero-carousel .card {
-                min-width: 85vw;
-                /* Show most of card */
-                height: 65vh;
-                /* Tall aspect ratio like reference */
-                scroll-snap-align: center;
-                flex-shrink: 0;
+                width: 100%;
+                /* Full width */
+                min-width: 0;
+                /* Reset min-width */
+                height: auto;
+                /* Auto height based on content */
+                min-height: 400px;
+                /* Maintain substantial size */
                 margin: 0;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
-                /* Center content vertically */
             }
 
             /* Specific adjustments for carousel cards */
             .hero-carousel .card-intro {
-                min-height: auto;
-                /* Reset min-height */
+                min-height: 400px;
             }
 
             .hero-carousel .card-time h2 {
                 font-size: 5rem;
-                /* Even larger for impact */
             }
 
-            /* Hide other cards for cleaner look if needed, or style them similarly */
+            /* VISIBILITY FIXES */
+            .card-project {
+                overflow: visible !important;
+                /* Allow content to be seen */
+                height: auto !important;
+                min-height: auto !important;
+            }
+
+            .card-project video,
+            .card-project img {
+                display: block !important;
+                position: relative !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+                height: auto !important;
+                /* Let video determine height or keep fixed if preferred, but auto is safer for visibility */
+                min-height: 250px;
+                /* Ensure at least some height */
+                max-height: none !important;
+            }
+
+            /* Uncap height for Terminal and Timeline to show all accolades/logs */
             .card-timeline,
             .card-terminal,
             .card-map {
                 background: #111;
                 border: none;
+                height: auto !important;
+                max-height: none !important;
+                /* Remove any height limits */
+                overflow: visible !important;
+            }
+
+            .terminal-line,
+            .timeline-entry {
+                display: block !important;
+                /* Ensure list items are shown */
             }
         }
     </style>
