@@ -701,21 +701,109 @@
         @media (max-width: 768px) {
             .dashboard-grid {
                 grid-template-columns: 1fr;
-                gap: 2rem;
-                /* Increased gap to prevent clubbing */
+                gap: 1.5rem;
+                padding-top: 1rem;
             }
 
             .card {
                 grid-column: span 1 !important;
+                border-radius: 32px;
+                /* Large rounded corners like reference */
+                border: 1px solid #222;
+                /* Subtle border */
+                background: #0F0F0F;
+                /* Dark background */
+                padding: 2rem;
             }
 
             body {
                 padding: 1rem;
-                /* More breathing room */
+                background: #000;
+                /* Darker body background */
             }
 
-            .card {
-                padding: 1.25rem;
+            /* PILL NAVIGATION */
+            nav {
+                position: sticky;
+                top: 1rem;
+                z-index: 1000;
+                background: #f5f5f5;
+                /* Light pill background */
+                border-radius: 100px;
+                /* Pill shape */
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.75rem 1.5rem;
+                margin-bottom: 2rem;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+                border: none;
+            }
+
+            .nav-brand {
+                color: #000;
+                /* Dark text for contrast on light pill */
+                font-weight: 600;
+                font-size: 0.9rem;
+                margin: 0;
+            }
+
+            .nav-status {
+                box-shadow: none;
+                /* Simplify status dot */
+                border: 1px solid #ccc;
+            }
+
+            .nav-toggle {
+                width: auto;
+                flex-direction: row;
+                gap: 0;
+                background: transparent;
+                padding: 0;
+            }
+
+            /* Hide extra buttons, keep a menu icon concept or just the main CTA */
+            .toggle-btn {
+                display: none;
+                /* Hide standard buttons */
+            }
+
+            /* Add a hamburger menu icon using pseudo-element on the container or a specific button */
+            .nav-toggle::after {
+                content: '☰';
+                font-size: 1.5rem;
+                color: #000;
+                cursor: pointer;
+                display: block;
+            }
+
+            /* INTRO CARD - "Hello Stranger" Vibe */
+            .card-intro {
+                background: #111;
+                min-height: 400px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                border: none;
+            }
+
+            .intro-text {
+                font-family: var(--font-sans);
+                font-weight: 300;
+                /* Thin font */
+                font-size: 4rem;
+                /* Large text */
+                line-height: 1.1;
+                color: #666;
+                /* Grey color */
+                background: none;
+                -webkit-text-fill-color: #666;
+                margin-bottom: 2rem;
+            }
+
+            .intro-text span {
+                color: #fff;
+                /* Highlight part in white */
             }
 
             /* LINEAR LAYOUT FOR PROJECTS */
@@ -725,29 +813,25 @@
                 display: flex;
                 flex-direction: column;
                 padding: 0;
-                /* Reset padding for full-width video */
-                background: var(--card-bg);
-                border: 1px solid var(--card-border);
+                background: #111;
+                border: none;
+                overflow: hidden;
             }
 
             .card-project video,
             .card-project img {
                 width: 100%;
                 height: 250px;
-                /* Fixed height for video */
                 object-fit: cover;
                 opacity: 1 !important;
-                /* Always visible */
                 filter: none !important;
-                /* No grayscale */
-                border-bottom: 1px solid var(--card-border);
+                border-bottom: none;
             }
 
             .project-overlay {
                 position: relative;
-                /* Move below video */
                 background: none;
-                padding: 1.5rem;
+                padding: 2rem;
                 height: auto;
                 pointer-events: auto;
             }
@@ -757,37 +841,55 @@
             }
 
             .project-title {
-                font-size: 1.5rem;
+                font-size: 2rem;
+                font-weight: 300;
                 margin-bottom: 0.5rem;
+                color: #fff;
             }
 
             .project-desc {
                 opacity: 1;
                 max-height: none;
-                margin-bottom: 1rem;
-                font-size: 0.9rem;
+                margin-bottom: 1.5rem;
+                font-size: 1rem;
+                line-height: 1.6;
+                color: #888;
                 display: block;
-                color: #ccc;
             }
 
             .tech-stack {
                 opacity: 1;
-                color: var(--accent-blue);
-                flex-wrap: wrap;
-                font-size: 0.75rem;
-                margin-top: 1rem;
+                color: #555;
+                font-family: var(--font-mono);
+                font-size: 0.8rem;
+                margin-top: 0;
             }
 
-            /* Adjust other cards */
+            /* STATS CARD */
+            .card-time {
+                background: #111;
+                border: none;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 3rem 2rem;
+            }
+
+            .card-time h2 {
+                font-size: 4rem;
+                font-weight: 200;
+                color: #fff;
+                margin: 1rem 0;
+            }
+
+            /* Hide other cards for cleaner look if needed, or style them similarly */
             .card-timeline,
-            .card-terminal {
-                height: auto;
-                max-height: 400px;
-                min-height: 200px;
-            }
-
-            .intro-text {
-                font-size: clamp(1.8rem, 8vw, 2.5rem);
+            .card-terminal,
+            .card-skills,
+            .card-map {
+                background: #111;
+                border: none;
             }
         }
     </style>
